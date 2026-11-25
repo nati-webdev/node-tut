@@ -2,10 +2,18 @@ const express = require('express')
 const path = require('path')
 const app = express();
 
+// setup static and middleware
 
-app.get('/', (req, res) => {
- res.sendFile(path.resolve(__dirname, './navbar-app/index.html'))
-})
+app.use(express.static('./public'))
+
+/*
+  
+  app.get('/', (req, res) => {
+  res.sendFile(path.resolve(__dirname, './navbar-app/index.html'))
+  })
+  adding to static assets 
+
+*/
 
 app.all('*', (req, res) => {
   res.status(404).send('<h1>resource not found</h1>')
