@@ -1,0 +1,54 @@
+const express = require('express');
+const app = express();
+const {products} = require('./data')
+
+
+
+app.get('/', (req, res) => {
+  res.send('<h1>Home page</h1> <a href="/api/products">products</a>')
+})
+app.get('/api/products', (req,res)=> {
+  const newproducts = products.map((item) => {
+    const {id,name,image} =item;
+    return {id,name,image}
+  })
+  res.json(newproducts)
+})
+
+app.get('/api/products/:productID', (req,res)=> {
+  //console.log(req)
+  //console.log(req.params)
+  const {productID} =req.params;
+  const newproduct = products.find((item) => item.id === Number(productID))
+  if(!newproduct){
+    return res.status(404).send('Product does not EXIST')
+  }
+  res.json(newproduct)
+
+})
+app.get('/api/products/:productID/reviews/:reviewID', (req,res) => {
+  //console.log(req.params)
+  res.send('hello world')
+})
+app.get('/api/v1/query', (req,res)=> {
+  //console.log(req.query)
+  const { search, limit } = req.query;
+  let sortedProducts = [...products]
+
+  if(limit){
+    sortedProducts = sortedProducts.slice(0, Number(limit))
+  }
+  if(search){
+    sortedProducts = sortedProducts.filter((product) => {
+      return product.name.startsWith(search)
+    })
+  }
+  if(sortedProducts.length < 1){
+    //res.status(200).send('no product matched your search')
+    return res.status(200).json({ success: true, data:[] })
+  }
+  res.status(200).json(sortedProducts)
+})
+app.listen(3000, ()=> {
+  console.log('server is listening on port 3000.....')
+})
